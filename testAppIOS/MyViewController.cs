@@ -1,38 +1,60 @@
 ﻿using System;
-using CoreGraphics;
-
 using UIKit;
+using CoreGraphics;
 
 namespace testAppIOS
 {
-    public partial class MyViewController : UIViewController
+    public class MyViewController : UIViewController
     {
-        public MyViewController() : base("MyViewController", null)
+        public MyViewController()
         {
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            // Perform any additional setup after loading the view, typically from a nib.
-            this.View.BackgroundColor = UIColor.Yellow;
+            this.View.BackgroundColor = UIColor.Black;
 
-            var nameFieldTxt = new UITextField()
-            {
-                Frame = new CGRect(20, 28, View.Bounds.Width - 40, 35),
-                BorderStyle = UITextBorderStyle.RoundedRect,
-                Placeholder = "Enter Your Name Here",
-            };
+			//create a text field control with the specified properties
+			var totalAmount = new UITextField()
+			{
+				Frame = new CGRect(20, 28, View.Bounds.Width - 40, 35),
+				KeyboardType = UIKeyboardType.DecimalPad,
+				BorderStyle = UITextBorderStyle.RoundedRect,
+				Placeholder = "Enter Total Amount",
+			};
 
-            View.Add(nameFieldTxt);
+			//create a button control with the specified properties
+			var calcButton = new UIButton(UIButtonType.Custom)
+			{
+				Frame = new CGRect(20, 71, View.Bounds.Width - 40, 45),
+				BackgroundColor = UIColor.FromRGB(0, 0, 0.2f),
+			};
+			calcButton.SetTitle("Calculate", UIControlState.Normal);
 
-        }
+			//create lable control with the specified properties
+			var resultLabel = new UILabel(new CGRect(20, 124, View.Bounds.Width - 40, 40))
+			{
+				TextColor = UIColor.Blue,
+				TextAlignment = UITextAlignment.Center,
+				Font = UIFont.SystemFontOfSize(24),
+				Text = "Tip is $0.00",
+			};
 
-        public override void DidReceiveMemoryWarning()
-        {
-            base.DidReceiveMemoryWarning();
-            // Release any cached data, images, etc that aren't in use.
-        }
+			//add all the child views (controls defined about) to screen (root view)
+			View.AddSubviews(totalAmount, calcButton, resultLabel);
+
+			//add touch event handler, anonymous delegate method
+			calcButton.TouchUpInside += delegate (object sender, EventArgs e)
+			{
+				//review first responder*
+				totalAmount.ResignFirstResponder();
+				//get the amount entered by the user
+				Double.TryParse(totalAmount.Text, out double amount);
+				//calcualte and display the tip
+				resultLabel.Text = string.Format("Tip is {0:C}", amount * 0.15);
+			};
+
+		}
     }
 }
-
